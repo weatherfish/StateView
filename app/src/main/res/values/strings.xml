@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">StateView</string>
+    <string name="InflateEmpty">Empty</string>
+    <string name="InflateRetry">Retry</string>
+    <string name="RemoveView">Remove</string>
 </resources>
+
