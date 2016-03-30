@@ -15,21 +15,21 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/InflateEmpty"/>
+            android:text="@string/InflateEmpty" />
 
         <Button
             android:id="@+id/btnInRetry"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/InflateRetry"/>
+            android:text="@string/InflateRetry" />
 
         <Button
             android:id="@+id/btnRemove"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/RemoveView"/>
+            android:text="@string/RemoveView" />
     </LinearLayout>
 
     <TextView
@@ -44,4 +44,5 @@
         android:layout_height="match_parent"
         android:layout_below="@id/ll"
         tools:visibility="gone" />
+
 </RelativeLayout>

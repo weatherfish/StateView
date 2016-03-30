@@ -162,7 +162,7 @@ public class StateView extends View {
     private void removeInflatedView(ViewGroup parent){
         if (mInflatedViewRef != null) {
             View refView = mInflatedViewRef.get();
-            if (parent != null) {
+            if (refView != null) {
                 parent.removeView(refView);
             }
         }
