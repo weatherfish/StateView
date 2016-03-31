@@ -159,7 +159,7 @@ public class StateView extends View {
                     view.setId(inflatedId);
                 }
 
-                final int index = parent.indexOfChild(this) + 1;
+                final int index = parent.indexOfChild(this);
 
                 final ViewGroup.LayoutParams layoutParams = getLayoutParams();
                 if (layoutParams != null) {
