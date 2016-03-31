@@ -7,13 +7,11 @@ import android.graphics.Canvas;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-
-import java.lang.ref.WeakReference;
+import android.widget.RelativeLayout;
 
 /**
  * Created by C on 4/3/2016.
@@ -23,13 +21,19 @@ public class StateView extends View {
 
     private int mEmptyResource;
     private int mRetryResource;
+    private int mLoadingResource;
     private int mEmptyViewId;
     private int mRetryViewId;
+    private int mLoadingViewId;
 
-    private WeakReference<View> mInflatedViewRef;
+    private View mEmptyView;
+    private View mRetryView;
+    private View mLoadingView;
 
     private LayoutInflater mInflater;
-    private OnInflateListener mInflateListener;
+    private OnRetryClickListener mRetryClickListener;
+
+    private RelativeLayout.LayoutParams mLayoutParams;
 
     public StateView(Context context) {
         this(context, null);
@@ -42,11 +46,15 @@ public class StateView extends View {
     public StateView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
+        mLayoutParams = new RelativeLayout.LayoutParams(context, attrs);
+
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.StateView);
         mEmptyResource = a.getResourceId(R.styleable.StateView_emptyResource, 0);
         mRetryResource = a.getResourceId(R.styleable.StateView_retryResource, 0);
+        mLoadingResource = a.getResourceId(R.styleable.StateView_loadingResource, 0);
         mEmptyViewId = a.getResourceId(R.styleable.StateView_emptyViewId, NO_ID);
         mRetryViewId = a.getResourceId(R.styleable.StateView_retryViewId, NO_ID);
+        mLoadingViewId = a.getResourceId(R.styleable.StateView_loadingViewId, NO_ID);
         a.recycle();
 
         if (mEmptyResource == 0){
@@ -54,6 +62,9 @@ public class StateView extends View {
         }
         if (mRetryResource == 0){
             mRetryResource = R.layout.view_retry;
+        }
+        if (mLoadingResource == 0) {
+            mLoadingResource = R.layout.view_loading;
         }
     }
 
@@ -73,29 +84,60 @@ public class StateView extends View {
 
     @Override
     public void setVisibility(int visibility) {
-        if (mInflatedViewRef != null) {
-            View view = mInflatedViewRef.get();
-            if (view != null) {
-                view.setVisibility(visibility);
-            } else {
-                throw new IllegalStateException("setVisibility called on un-referenced view");
-            }
+        setVisibility(mEmptyView, visibility);
+        setVisibility(mRetryView, visibility);
+        setVisibility(mLoadingView, visibility);
+    }
 
-        } else {
-            super.setVisibility(visibility);
-        }
+    private void setVisibility(View view, int visibility){
+        if (view != null)
+            view.setVisibility(visibility);
     }
 
     public void showContent(){
-       removeInflatedView();
+       setVisibility(GONE);
     }
 
-    public View inflateEmpty(){
-        return inflate(mEmptyResource, mEmptyViewId);
+    public View showEmpty(){
+        if (mEmptyView == null)
+            mEmptyView = inflate(mEmptyResource, mEmptyViewId);
+        setVisibility(mLoadingView, GONE);
+        setVisibility(mRetryView, GONE);
+        setVisibility(mEmptyView, VISIBLE);
+        return mEmptyView;
     }
 
-    public View inflateRetry(){
-        return inflate(mRetryResource, mRetryViewId);
+    public View showRetry(){
+        if (mRetryView == null) {
+            mRetryView = inflate(mRetryResource, mRetryViewId);
+            mRetryView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mRetryClickListener != null){
+                        showLoading();
+                        mRetryView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mRetryClickListener.onRetryClick();
+                            }
+                        }, 200);
+                    }
+                }
+            });
+        }
+        setVisibility(mLoadingView, GONE);
+        setVisibility(mEmptyView, GONE);
+        setVisibility(mRetryView, VISIBLE);
+        return mRetryView;
+    }
+
+    public View showLoading(){
+        if (mLoadingView == null)
+            mLoadingView = inflate(mLoadingResource, mLoadingViewId);
+        setVisibility(mEmptyView, GONE);
+        setVisibility(mRetryView, GONE);
+        setVisibility(mLoadingView, VISIBLE);
+        return mLoadingView;
     }
 
     public View inflate(@LayoutRes int layoutResource, @IdRes int inflatedId) {
@@ -117,27 +159,21 @@ public class StateView extends View {
                     view.setId(inflatedId);
                 }
 
-                Log.e("State", "///-" + parent.getChildCount());
-
-                removeInflatedView(parent);
-
-                final int index = parent.indexOfChild(this);
-
-                Log.e("State1", index + "///-" + parent.getChildCount());
+                final int index = parent.indexOfChild(this) + 1;
 
                 final ViewGroup.LayoutParams layoutParams = getLayoutParams();
                 if (layoutParams != null) {
-                    parent.addView(view, index, layoutParams);
+                    if (parent instanceof RelativeLayout) {
+                        parent.addView(view, index, mLayoutParams);
+                    }else {
+                        parent.addView(view, index, layoutParams);
+                    }
                 } else {
                     parent.addView(view, index);
                 }
 
-                Log.e("State2", index + "///+" + parent.getChildCount());
-
-                mInflatedViewRef = new WeakReference<>(view);
-
-                if (mInflateListener != null) {
-                    mInflateListener.onInflate(this, view);
+                if (mLoadingView != null && mRetryView != null && mEmptyView != null){
+                    parent.removeViewInLayout(this);
                 }
 
                 return view;
@@ -149,24 +185,7 @@ public class StateView extends View {
         }
     }
 
-    private void removeInflatedView(){
-        final ViewParent viewParent = getParent();
 
-        if (viewParent != null && viewParent instanceof ViewGroup) {
-            removeInflatedView((ViewGroup) viewParent);
-        } else {
-            throw new IllegalStateException("StateView must have a non-null ViewGroup viewParent");
-        }
-    }
-
-    private void removeInflatedView(ViewGroup parent){
-        if (mInflatedViewRef != null) {
-            View refView = mInflatedViewRef.get();
-            if (refView != null) {
-                parent.removeView(refView);
-            }
-        }
-    }
 
     public int getEmptyResource() {
         return mEmptyResource;
@@ -208,31 +227,11 @@ public class StateView extends View {
         this.mInflater = inflater;
     }
 
-    /**
-     * Specifies the inflate listener to be notified after this StateView successfully
-     * inflated its layout resource.
-     *
-     * @param inflateListener The OnInflateListener to notify of successful inflation.
-     *
-     */
-    public void setOnInflateListener(OnInflateListener inflateListener) {
-        mInflateListener = inflateListener;
+    public void setOnRetryClickListener(OnRetryClickListener listener){
+        this.mRetryClickListener = listener;
     }
 
-    /**
-     * Listener used to receive a notification after a ViewStub has successfully
-     * inflated its layout resource.
-     *
-     */
-    public interface OnInflateListener {
-        /**
-         * Invoked after a StateView successfully inflated its layout resource.
-         * This method is invoked after the inflated view was added to the
-         * hierarchy but before the layout pass.
-         *
-         * @param stateView The StateView that initiated the inflation.
-         * @param inflated The inflated View.
-         */
-        void onInflate(StateView stateView, View inflated);
+    public interface OnRetryClickListener{
+        void onRetryClick();
     }
 }

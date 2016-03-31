@@ -1,7 +1,12 @@
 # StateView
 
-待添加。
 
+## ChangeLog
+
+### Version: 0.2.0
+修复当使用layout_below的时候addView可能无法正常显示的问题。
+
+### Version: 0.1.0
 测试Sample得知：
 ```xml
         <com.github.nukc.stateview.StateView
