@@ -101,9 +101,8 @@ public class StateView extends View {
     public View showEmpty(){
         if (mEmptyView == null)
             mEmptyView = inflate(mEmptyResource, mEmptyViewId);
-        setVisibility(mLoadingView, GONE);
-        setVisibility(mRetryView, GONE);
-        setVisibility(mEmptyView, VISIBLE);
+
+        showView(mEmptyView);
         return mEmptyView;
     }
 
@@ -125,19 +124,31 @@ public class StateView extends View {
                 }
             });
         }
-        setVisibility(mLoadingView, GONE);
-        setVisibility(mEmptyView, GONE);
-        setVisibility(mRetryView, VISIBLE);
+
+        showView(mRetryView);
         return mRetryView;
     }
 
     public View showLoading(){
         if (mLoadingView == null)
             mLoadingView = inflate(mLoadingResource, mLoadingViewId);
-        setVisibility(mEmptyView, GONE);
-        setVisibility(mRetryView, GONE);
-        setVisibility(mLoadingView, VISIBLE);
+
+        showView(mLoadingView);
         return mLoadingView;
+    }
+
+    private void showView(View view){
+        setVisibility(view, VISIBLE);
+        if (mEmptyView == view){
+            setVisibility(mLoadingView, GONE);
+            setVisibility(mRetryView, GONE);
+        }else if (mLoadingView == view){
+            setVisibility(mEmptyView, GONE);
+            setVisibility(mRetryView, GONE);
+        }else {
+            setVisibility(mEmptyView, GONE);
+            setVisibility(mLoadingView, GONE);
+        }
     }
 
     public View inflate(@LayoutRes int layoutResource, @IdRes int inflatedId) {
