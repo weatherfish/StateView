@@ -26,13 +26,12 @@ StateView一个轻量级的控件, 继承自`View`, 吸收了`ViewStub`的一些
 
 ```
 
-显示空视图: ```mStateView.showEmpty();```
-显示加载视图: ```mStateView.showLoading();```
-显示重试视图: ```mStateView.showRetry();```
+- 显示空视图: ```mStateView.showEmpty();```
+- 显示加载视图: ```mStateView.showLoading();```
+- 显示重试视图: ```mStateView.showRetry();```
+- 显示内容: ```java mStateView.showContent(); //实质就是setVisibility(GONE); ```
 
-显示内容: ```mStateView.showContent(); //实质就是setVisibility(GONE);```
-
-设置重试点击事件:
+- 设置重试点击事件:
 
 ```java
     mStateView.setOnRetryClickListener(new StateView.OnRetryClickListener() {
@@ -50,7 +49,7 @@ StateView一个轻量级的控件, 继承自`View`, 吸收了`ViewStub`的一些
 更新gradle和library版本, 增加一个私有方法showView。
 
 #### Version: 0.2.0
-修复当使用layout_below的时候addView可能无法正常显示的问题。
+修复v0.1.0版本中当使用layout_below的时候addView可能无法正常显示的问题。
 
 #### Version: 0.1.0
 测试Sample得知：
