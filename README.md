@@ -10,7 +10,7 @@ StateView一个轻量级的控件, 继承自`View`, 吸收了`ViewStub`的一些
 ## Usage
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:0.2.1'
+   compile 'com.github.nukc.stateview:library:0.2.2'
 ```
 
 添加到布局:
