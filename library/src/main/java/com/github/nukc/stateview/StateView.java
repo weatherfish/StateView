@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.v4.view.LayoutInflaterCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,7 +47,12 @@ public class StateView extends View {
     public StateView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        mLayoutParams = new RelativeLayout.LayoutParams(context, attrs);
+        if (attrs == null) {
+            mLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+        } else {
+            mLayoutParams = new RelativeLayout.LayoutParams(context, attrs);
+        }
 
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.StateView);
         mEmptyResource = a.getResourceId(R.styleable.StateView_emptyResource, 0);
@@ -163,8 +169,7 @@ public class StateView extends View {
                 } else {
                     factory = LayoutInflater.from(getContext());
                 }
-                final View view = factory.inflate(layoutResource, parent,
-                        false);
+                final View view = factory.inflate(layoutResource, parent, false);
 
                 if (inflatedId != NO_ID) {
                     view.setId(inflatedId);
