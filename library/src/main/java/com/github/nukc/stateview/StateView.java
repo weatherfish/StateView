@@ -1,6 +1,8 @@
 package com.github.nukc.stateview;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -35,6 +37,19 @@ public class StateView extends View {
     private OnRetryClickListener mRetryClickListener;
 
     private RelativeLayout.LayoutParams mLayoutParams;
+
+    public static StateView inject(Activity activity) {
+        ViewGroup rootView = (ViewGroup) activity.getWindow().getDecorView();
+        StateView stateView = new StateView(activity);
+        rootView.addView(stateView);
+        return stateView;
+    }
+
+    public static StateView inject(ViewGroup parent) {
+        StateView stateView = new StateView(parent.getContext());
+        parent.addView(stateView);
+        return stateView;
+    }
 
     public StateView(Context context) {
         this(context, null);
@@ -205,8 +220,6 @@ public class StateView extends View {
             throw new IllegalStateException("StateView must have a non-null ViewGroup viewParent");
         }
     }
-
-
 
     public int getEmptyResource() {
         return mEmptyResource;
