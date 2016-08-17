@@ -96,8 +96,9 @@ public class StateView extends View {
     }
 
     private void setVisibility(View view, int visibility){
-        if (view != null)
+        if (view != null) {
             view.setVisibility(visibility);
+        }
     }
 
     public void showContent(){
@@ -105,8 +106,9 @@ public class StateView extends View {
     }
 
     public View showEmpty(){
-        if (mEmptyView == null)
+        if (mEmptyView == null) {
             mEmptyView = inflate(mEmptyResource, mEmptyViewId);
+        }
 
         showView(mEmptyView);
         return mEmptyView;
@@ -136,8 +138,11 @@ public class StateView extends View {
     }
 
     public View showLoading(){
-        if (mLoadingView == null)
+        if (mLoadingView == null) {
             mLoadingView = inflate(mLoadingResource, mLoadingViewId);
+            //解决显示LoadingView后还能触摸下层的View
+            mLoadingView.setClickable(true);
+        }
 
         showView(mLoadingView);
         return mLoadingView;

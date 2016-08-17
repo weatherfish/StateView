@@ -3,6 +3,7 @@ package com.github.nukc.sample;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.github.nukc.stateview.StateView;
@@ -24,9 +25,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mStateView.setOnRetryClickListener(new StateView.OnRetryClickListener() {
             @Override
             public void onRetryClick() {
-                Toast.makeText(getApplicationContext(), "retry click", Toast.LENGTH_SHORT).show();
+                int index = ((RelativeLayout)mStateView.getParent()).indexOfChild(mStateView);
+                Toast.makeText(MainActivity.this, "retry click", Toast.LENGTH_SHORT).show();
             }
         });
+
+        findViewById(R.id.btnTest).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "warn: can click", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override

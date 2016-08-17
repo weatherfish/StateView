@@ -38,6 +38,20 @@
         android:layout_centerInParent="true"
         android:text="Hello World!" />
 
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/btnTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="test click"/>
+
+    </FrameLayout>
+
+
     <com.github.nukc.stateview.StateView
         android:id="@+id/stateView"
         android:layout_width="match_parent"
