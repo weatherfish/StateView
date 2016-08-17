@@ -8,6 +8,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -38,17 +39,26 @@ public class StateView extends View {
 
     private RelativeLayout.LayoutParams mLayoutParams;
 
-    public static StateView inject(Activity activity) {
+    public static StateView inject(@NonNull Activity activity) {
         ViewGroup rootView = (ViewGroup) activity.getWindow().getDecorView();
         StateView stateView = new StateView(activity);
         rootView.addView(stateView);
         return stateView;
     }
 
-    public static StateView inject(ViewGroup parent) {
+    public static StateView inject(@NonNull ViewGroup parent) {
         StateView stateView = new StateView(parent.getContext());
         parent.addView(stateView);
         return stateView;
+    }
+
+    public static StateView inject(@NonNull View view) {
+        if (view instanceof  ViewGroup) {
+            ViewGroup parent = (ViewGroup) view;
+            return inject(parent);
+        } else {
+            throw new ClassCastException("view must be ViewGroup");
+        }
     }
 
     public StateView(Context context) {

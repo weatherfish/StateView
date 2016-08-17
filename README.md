@@ -10,7 +10,7 @@ StateView一个轻量级的控件, 继承自`View`, 吸收了`ViewStub`的一些
 ## Usage
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:0.3.0'
+   compile 'com.github.nukc.stateview:library:0.3.1'
 ```
 
 添加到布局:
@@ -40,7 +40,7 @@ StateView一个轻量级的控件, 继承自`View`, 吸收了`ViewStub`的一些
     });
 ```
 
-直接在代码中使用:
+或直接在代码中使用:
 
 - 注入到Activity
 ```java
@@ -52,11 +52,21 @@ StateView一个轻量级的控件, 继承自`View`, 吸收了`ViewStub`的一些
     mStateView = StateView.inject(ViewGroup parent);
 ```
 
+```java
+    //可用于在Fragment的onCreateView中
+    mStateView = StateView.inject(View view);
+```
+
 ## ChangeLog
+
+#### Version 0.3.1
+增加静态方法:
+inject(View view),该参数view必须是viewGroup,可用于在Fragment中;
 
 #### Version 0.3.0
 增加静态方法:
 inject(Activity activity),用于把StateView添加到DecorView中;
+
 inject(ViewGroup parent),用于添加到ViewGroup中;
 
 #### Version: 0.2.4
