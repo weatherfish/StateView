@@ -4,8 +4,5 @@
         <attr name="emptyResource" format="reference" />
         <attr name="retryResource" format="reference" />
         <attr name="loadingResource" format="reference" />
-        <attr name="emptyViewId" format="reference" />
-        <attr name="retryViewId" format="reference" />
-        <attr name="loadingViewId" format="reference" />
     </declare-styleable>
 </resources>

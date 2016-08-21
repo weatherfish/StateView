@@ -10,7 +10,7 @@ StateView一个轻量级的控件, 继承自`View`, 吸收了`ViewStub`的一些
 ## Usage
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:0.3.1'
+   compile 'com.github.nukc.stateview:library:0.3.2'
 ```
 
 添加到布局:
@@ -35,7 +35,8 @@ StateView一个轻量级的控件, 继承自`View`, 吸收了`ViewStub`的一些
     mStateView.setOnRetryClickListener(new StateView.OnRetryClickListener() {
         @Override
         public void onRetryClick() {
-            //do something
+            //do something, no need to call showLoading()
+            //不需要调用showLoading()方法, StateView自会调用
         }
     });
 ```
@@ -45,29 +46,39 @@ StateView一个轻量级的控件, 继承自`View`, 吸收了`ViewStub`的一些
 - 注入到Activity
 ```java
     mStateView = StateView.inject(Activity activity);
+    //如果有actionbar/toolbar
+    mStateView = StateView.inject(activity, true);
 ```
 
 - 注入到ViewGroup
 ```java
     mStateView = StateView.inject(ViewGroup parent);
+
+    mStateView = StateView.inject(ViewGroup parent, boolean hasActionBar);
 ```
 
 ```java
     //可用于在Fragment的onCreateView中
     mStateView = StateView.inject(View view);
+
+    mStateView = StateView.inject(View view, boolean hasActionBar);
 ```
 
 ## ChangeLog
 
+#### Version 0.3.2
+进一步测试, 增加Sample;
+删除没必要的方法, 考虑到注入不应该遮挡工具栏, 为此增加inject方法
+
 #### Version 0.3.1
 增加静态方法:
-inject(View view),该参数view必须是viewGroup,可用于在Fragment中;
+inject(View view),该参数view必须是viewGroup,可用于在Fragment中
 
 #### Version 0.3.0
 增加静态方法:
 inject(Activity activity),用于把StateView添加到DecorView中;
 
-inject(ViewGroup parent),用于添加到ViewGroup中;
+inject(ViewGroup parent),用于添加到ViewGroup中
 
 #### Version: 0.2.4
 修复显示LoadingView后还能触摸下层的View

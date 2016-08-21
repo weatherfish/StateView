@@ -2,19 +2,19 @@ package com.github.nukc.stateview;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
-import android.support.v4.view.LayoutInflaterCompat;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 /**
@@ -26,9 +26,6 @@ public class StateView extends View {
     private int mEmptyResource;
     private int mRetryResource;
     private int mLoadingResource;
-    private int mEmptyViewId;
-    private int mRetryViewId;
-    private int mLoadingViewId;
 
     private View mEmptyView;
     private View mRetryView;
@@ -39,23 +36,96 @@ public class StateView extends View {
 
     private RelativeLayout.LayoutParams mLayoutParams;
 
+    /**
+     * 注入到activity中
+     *
+     * @param activity Activity
+     * @return StateView
+     */
     public static StateView inject(@NonNull Activity activity) {
-        ViewGroup rootView = (ViewGroup) activity.getWindow().getDecorView();
-        StateView stateView = new StateView(activity);
-        rootView.addView(stateView);
-        return stateView;
+        return inject(activity, false);
     }
 
+    /**
+     * 注入到activity中
+     *
+     * @param activity Activity
+     * @param hasActionBar 是否有actionbar/toolbar,
+     *                     true: 会setMargin top, margin大小是状态栏高度 + 工具栏高度
+     *                     false: not set
+     * @return StateView
+     */
+    public static StateView inject(@NonNull Activity activity, boolean hasActionBar) {
+        ViewGroup rootView = (ViewGroup) activity.getWindow().getDecorView();
+        return inject(rootView, hasActionBar, true);
+    }
+
+    /**
+     * 注入到ViewGroup中
+     *
+     * @param parent extends ViewGroup
+     * @return StateView
+     */
     public static StateView inject(@NonNull ViewGroup parent) {
+        return inject(parent, false);
+    }
+
+    /**
+     * 注入到ViewGroup中
+     *
+     * @param parent extends ViewGroup
+     * @param hasActionBar 是否有actionbar/toolbar,
+     *                     true: 会setMargin top, margin大小是actionbarSize
+     *                     false: not set
+     * @return StateView
+     */
+    public static StateView inject(@NonNull ViewGroup parent, boolean hasActionBar) {
+        return inject(parent, hasActionBar, false);
+    }
+
+    /**
+     * 注入到ViewGroup中
+     *
+     * @param parent extends ViewGroup
+     * @param hasActionBar 是否有actionbar/toolbar
+     * @param isActivity 是否注入到Activity
+     * @return StateView
+     */
+    private static StateView inject(@NonNull ViewGroup parent, boolean hasActionBar, boolean isActivity) {
         StateView stateView = new StateView(parent.getContext());
         parent.addView(stateView);
+        if (hasActionBar) {
+            stateView.setTopMargin(isActivity);
+        }
         return stateView;
     }
 
+    /**
+     * 注入到View中
+     *
+     * @param view instanceof ViewGroup
+     * @return StateView
+     */
     public static StateView inject(@NonNull View view) {
-        if (view instanceof  ViewGroup) {
+        if (view instanceof ViewGroup) {
             ViewGroup parent = (ViewGroup) view;
             return inject(parent);
+        } else {
+            throw new ClassCastException("view must be ViewGroup");
+        }
+    }
+
+    /**
+     * 注入到View中
+     *
+     * @param view instanceof ViewGroup
+     * @param hasActionBar 是否有actionbar/toolbar
+     * @return StateView
+     */
+    public static StateView inject(@NonNull View view, boolean hasActionBar) {
+        if (view instanceof ViewGroup) {
+            ViewGroup parent = (ViewGroup) view;
+            return inject(parent, hasActionBar);
         } else {
             throw new ClassCastException("view must be ViewGroup");
         }
@@ -72,20 +142,10 @@ public class StateView extends View {
     public StateView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        if (attrs == null) {
-            mLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT);
-        } else {
-            mLayoutParams = new RelativeLayout.LayoutParams(context, attrs);
-        }
-
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.StateView);
         mEmptyResource = a.getResourceId(R.styleable.StateView_emptyResource, 0);
         mRetryResource = a.getResourceId(R.styleable.StateView_retryResource, 0);
         mLoadingResource = a.getResourceId(R.styleable.StateView_loadingResource, 0);
-        mEmptyViewId = a.getResourceId(R.styleable.StateView_emptyViewId, NO_ID);
-        mRetryViewId = a.getResourceId(R.styleable.StateView_retryViewId, NO_ID);
-        mLoadingViewId = a.getResourceId(R.styleable.StateView_loadingViewId, NO_ID);
         a.recycle();
 
         if (mEmptyResource == 0){
@@ -96,6 +156,13 @@ public class StateView extends View {
         }
         if (mLoadingResource == 0) {
             mLoadingResource = R.layout.view_loading;
+        }
+
+        if (attrs == null) {
+            mLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+        } else {
+            mLayoutParams = new RelativeLayout.LayoutParams(context, attrs);
         }
     }
 
@@ -132,7 +199,7 @@ public class StateView extends View {
 
     public View showEmpty(){
         if (mEmptyView == null) {
-            mEmptyView = inflate(mEmptyResource, mEmptyViewId);
+            mEmptyView = inflate(mEmptyResource);
         }
 
         showView(mEmptyView);
@@ -141,7 +208,7 @@ public class StateView extends View {
 
     public View showRetry(){
         if (mRetryView == null) {
-            mRetryView = inflate(mRetryResource, mRetryViewId);
+            mRetryView = inflate(mRetryResource);
             mRetryView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -164,9 +231,7 @@ public class StateView extends View {
 
     public View showLoading(){
         if (mLoadingView == null) {
-            mLoadingView = inflate(mLoadingResource, mLoadingViewId);
-            //解决显示LoadingView后还能触摸下层的View
-            mLoadingView.setClickable(true);
+            mLoadingView = inflate(mLoadingResource);
         }
 
         showView(mLoadingView);
@@ -187,7 +252,7 @@ public class StateView extends View {
         }
     }
 
-    public View inflate(@LayoutRes int layoutResource, @IdRes int inflatedId) {
+    public View inflate(@LayoutRes int layoutResource) {
         final ViewParent viewParent = getParent();
 
         if (viewParent != null && viewParent instanceof ViewGroup) {
@@ -201,15 +266,17 @@ public class StateView extends View {
                 }
                 final View view = factory.inflate(layoutResource, parent, false);
 
-                if (inflatedId != NO_ID) {
-                    view.setId(inflatedId);
-                }
-
                 final int index = parent.indexOfChild(this);
+                //防止还能触摸底下的View
+                view.setClickable(true);
 
                 final ViewGroup.LayoutParams layoutParams = getLayoutParams();
                 if (layoutParams != null) {
                     if (parent instanceof RelativeLayout) {
+                        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) layoutParams;
+                        mLayoutParams.setMargins(lp.leftMargin, lp.topMargin,
+                                lp.rightMargin, lp.bottomMargin);
+
                         parent.addView(view, index, mLayoutParams);
                     }else {
                         parent.addView(view, index, layoutParams);
@@ -231,36 +298,62 @@ public class StateView extends View {
         }
     }
 
-    public int getEmptyResource() {
-        return mEmptyResource;
+    /**
+     * 设置topMargin, 当有actionbar/toolbar的时候
+     * @param isActivity if true: 注入到Activity, 需要加上状态栏的高度
+     */
+    public void setTopMargin(boolean isActivity){
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
+        layoutParams.topMargin = isActivity ?
+                getStatusBarHeight() + getActionBarHeight() : getActionBarHeight();
     }
 
+    /**
+     * @return 状态栏的高度
+     */
+    private int getStatusBarHeight() {
+        int height = 0;
+        int resId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resId > 0) {
+            height = getResources().getDimensionPixelSize(resId);
+        }
+        return height;
+    }
+
+    /**
+     * @return actionBarSize
+     */
+    private int getActionBarHeight() {
+        int height = 0;
+        TypedValue tv = new TypedValue();
+        if (getContext().getTheme().resolveAttribute(R.attr.actionBarSize, tv, true)) {
+            height = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+        }
+        return height;
+    }
+
+    /**
+     * 设置emptyView的自定义Layout
+     * @param emptyResource emptyView的layoutResource
+     */
     public void setEmptyResource(@LayoutRes int emptyResource) {
         this.mEmptyResource = emptyResource;
     }
 
-    public int getErrorResource() {
-        return mRetryResource;
+    /**
+     * 设置retryView的自定义Layout
+     * @param retryResource retryView的layoutResource
+     */
+    public void setRetryResource(@LayoutRes int retryResource) {
+        this.mRetryResource = retryResource;
     }
 
-    public void setErrorResource(@LayoutRes int errorResource) {
-        this.mRetryResource = errorResource;
-    }
-
-    public int getEmptyViewId() {
-        return mEmptyViewId;
-    }
-
-    public void setEmptyViewId(@IdRes int emptyViewId) {
-        this.mEmptyViewId = emptyViewId;
-    }
-
-    public int getErrorViewId() {
-        return mRetryViewId;
-    }
-
-    public void setErrorViewId(@IdRes int errorViewId) {
-        this.mRetryViewId = errorViewId;
+    /**
+     * 设置loadingView的自定义Layout
+     * @param loadingResource loadingView的layoutResource
+     */
+    public void setLoadingResource(@LayoutRes int loadingResource) {
+        mLoadingResource = loadingResource;
     }
 
     public LayoutInflater getInflater() {
@@ -271,6 +364,10 @@ public class StateView extends View {
         this.mInflater = inflater;
     }
 
+    /**
+     * 监听重试
+     * @param listener
+     */
     public void setOnRetryClickListener(OnRetryClickListener listener){
         this.mRetryClickListener = listener;
     }

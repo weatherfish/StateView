@@ -1,56 +1,36 @@
 package com.github.nukc.sample;
 
-import android.os.Bundle;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.View;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
-import com.github.nukc.stateview.StateView;
-
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private StateView mStateView;
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mStateView = (StateView) findViewById(R.id.stateView);
-        findViewById(R.id.btnInEmpty).setOnClickListener(this);
-        findViewById(R.id.btnInRetry).setOnClickListener(this);
-        findViewById(R.id.btnRemove).setOnClickListener(this);
-
-        mStateView.setOnRetryClickListener(new StateView.OnRetryClickListener() {
-            @Override
-            public void onRetryClick() {
-                int index = ((RelativeLayout)mStateView.getParent()).indexOfChild(mStateView);
-                Toast.makeText(MainActivity.this, "retry click", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        findViewById(R.id.btnTest).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_default).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "warn: can click", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, DefaultActivity.class));
             }
         });
 
-    }
+        findViewById(R.id.btn_inject_activity).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, InjectActivity.class));
+            }
+        });
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btnInEmpty:
-                mStateView.showEmpty();
-                break;
-            case R.id.btnInRetry:
-                mStateView.showRetry();
-                break;
-            case R.id.btnRemove:
-                mStateView.showContent();
-                break;
-        }
+        findViewById(R.id.btn_inject_fragment).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, FragmentActivity.class));
+            }
+        });
     }
 }
