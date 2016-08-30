@@ -7,6 +7,9 @@ StateView一个轻量级的控件, 继承自`View`, 吸收了`ViewStub`的一些
 当进行操作显示空/重试/加载视图后, 该视图才会被添加到布局中。所以当用不到显示视图的时候, 占用内存是很少的。
 由于目前只有3个视图, 所以至多只会添加3次, 相对于其他具有同样功能的一些控件, StateView更具有优势。
 
+StateView is a lightweight view, absorb characteristics of ViewStub. the initial state is not visible,
+does not occupy the position of the layout, occupy less memory. When the operation show empty / retry / loading view,
+which will be added to the layout.
 
 ## Usage
 
