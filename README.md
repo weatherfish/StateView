@@ -1,6 +1,7 @@
 # StateView
 
-[ ![Download](https://api.bintray.com/packages/nukc/maven/StateView/images/download.svg) ](https://bintray.com/nukc/maven/StateView/_latestVersion)
+![Download](https://api.bintray.com/packages/nukc/maven/StateView/images/download.svg) ](https://bintray.com/nukc/maven/StateView/_latestVersion)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-StateView-green.svg?style=true)](https://android-arsenal.com/details/1/4255)
 
 StateView一个轻量级的控件, 继承自`View`, 吸收了`ViewStub`的一些特性, 初始状态下是不可见的, 不占布局位置, 占用内存少。
 当进行操作显示空/重试/加载视图后, 该视图才会被添加到布局中。所以当用不到显示视图的时候, 占用内存是很少的。
