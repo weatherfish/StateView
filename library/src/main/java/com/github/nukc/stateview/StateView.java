@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
@@ -14,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 /**
@@ -149,13 +147,13 @@ public class StateView extends View {
         a.recycle();
 
         if (mEmptyResource == 0){
-            mEmptyResource = R.layout.view_empty;
+            mEmptyResource = R.layout.base_empty;
         }
         if (mRetryResource == 0){
-            mRetryResource = R.layout.view_retry;
+            mRetryResource = R.layout.base_retry;
         }
         if (mLoadingResource == 0) {
-            mLoadingResource = R.layout.view_loading;
+            mLoadingResource = R.layout.base_loading;
         }
 
         if (attrs == null) {

@@ -4,14 +4,10 @@ package com.github.nukc.sample;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.github.nukc.stateview.StateView;
 
@@ -40,6 +36,9 @@ public class InjectFragment extends Fragment {
                         break;
                     case R.id.show_retry:
                         mStateView.showRetry();
+                        break;
+                    case R.id.show_loading:
+                        mStateView.showLoading();
                         break;
                     case R.id.show_content:
                         mStateView.showContent();

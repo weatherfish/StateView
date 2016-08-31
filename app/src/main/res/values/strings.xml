@@ -1,10 +1,9 @@
 <resources>
     <string name="app_name">StateView</string>
-    <string name="InflateEmpty">Empty</string>
-    <string name="InflateRetry">Retry</string>
-    <string name="RemoveView">Remove</string>
+    <string name="InflateEmpty">show empty</string>
+    <string name="InflateRetry">show retry</string>
+    <string name="InflateLoading">show loading</string>
+    <string name="ShowContent">show content</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
 

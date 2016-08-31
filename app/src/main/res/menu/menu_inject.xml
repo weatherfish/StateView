@@ -6,7 +6,10 @@
     <item android:id="@+id/show_retry"
         android:title="@string/InflateRetry" />
 
+    <item android:id="@+id/show_loading"
+        android:title="@string/InflateLoading" />
+
     <item android:id="@+id/show_content"
-        android:title="ShowContent"/>
+        android:title="@string/ShowContent"/>
 
 </menu>

@@ -8,6 +8,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="还没有数据呢！" />
+        android:text="@string/text_empty" />
 
 </FrameLayout>

@@ -1,25 +1,25 @@
 package com.github.nukc.sample;
 
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.github.nukc.stateview.StateView;
 
-public class InjectActivity extends AppCompatActivity {
-
-    private static final String TAG = InjectActivity.class.getSimpleName();
+public class CustomActivity extends AppCompatActivity {
 
     private StateView mStateView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inject);
+        setContentView(R.layout.activity_custom);
 
         mStateView = StateView.inject(this, true);
+        mStateView.setEmptyResource(R.layout.view_empty);
+        mStateView.setRetryResource(R.layout.view_retry);
 
         mStateView.setOnRetryClickListener(new StateView.OnRetryClickListener() {
             @Override
@@ -53,4 +53,5 @@ public class InjectActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
