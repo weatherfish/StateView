@@ -13,7 +13,7 @@ it will be added to the layout.
 add the dependency to your build.gradle:
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:0.3.3'
+   compile 'com.github.nukc.stateview:library:0.3.4'
 ```
 
 ##Usage
