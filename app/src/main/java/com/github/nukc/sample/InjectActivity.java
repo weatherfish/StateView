@@ -19,7 +19,7 @@ public class InjectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inject);
 
-        mStateView = StateView.inject(this, true);
+        mStateView = StateView.inject(this);
 
         mStateView.setOnRetryClickListener(new StateView.OnRetryClickListener() {
             @Override

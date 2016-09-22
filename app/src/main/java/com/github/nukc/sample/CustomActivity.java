@@ -17,7 +17,7 @@ public class CustomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom);
 
-        mStateView = StateView.inject(this, true);
+        mStateView = StateView.inject(this);
         mStateView.setEmptyResource(R.layout.view_empty);
         mStateView.setRetryResource(R.layout.view_retry);
 
