@@ -34,6 +34,7 @@ public class StateView extends View {
 
     private RelativeLayout.LayoutParams mLayoutParams;
 
+
     /**
      * 注入到activity中
      *
@@ -41,7 +42,8 @@ public class StateView extends View {
      * @return StateView
      */
     public static StateView inject(@NonNull Activity activity) {
-        return inject(activity, false);
+        ViewGroup rootView = (ViewGroup) activity.getWindow().getDecorView().findViewById(android.R.id.content);
+        return inject(rootView);
     }
 
     /**
@@ -53,6 +55,7 @@ public class StateView extends View {
      *                     false: not set
      * @return StateView
      */
+    @Deprecated
     public static StateView inject(@NonNull Activity activity, boolean hasActionBar) {
         ViewGroup rootView = (ViewGroup) activity.getWindow().getDecorView();
         return inject(rootView, hasActionBar, true);
@@ -78,7 +81,12 @@ public class StateView extends View {
      * @return StateView
      */
     public static StateView inject(@NonNull ViewGroup parent, boolean hasActionBar) {
-        return inject(parent, hasActionBar, false);
+        StateView stateView = new StateView(parent.getContext());
+        parent.addView(stateView);
+        if (hasActionBar) {
+            stateView.setTopMargin();
+        }
+        return stateView;
     }
 
     /**
@@ -89,6 +97,7 @@ public class StateView extends View {
      * @param isActivity 是否注入到Activity
      * @return StateView
      */
+    @Deprecated
     private static StateView inject(@NonNull ViewGroup parent, boolean hasActionBar, boolean isActivity) {
         StateView stateView = new StateView(parent.getContext());
         parent.addView(stateView);
@@ -300,15 +309,22 @@ public class StateView extends View {
      * 设置topMargin, 当有actionbar/toolbar的时候
      * @param isActivity if true: 注入到Activity, 需要加上状态栏的高度
      */
+    @Deprecated
     public void setTopMargin(boolean isActivity){
         ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
         layoutParams.topMargin = isActivity ?
                 getStatusBarHeight() + getActionBarHeight() : getActionBarHeight();
     }
 
+    public void setTopMargin() {
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
+        layoutParams.topMargin = getActionBarHeight();
+    }
+
     /**
      * @return 状态栏的高度
      */
+    @Deprecated
     private int getStatusBarHeight() {
         int height = 0;
         int resId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -364,7 +380,7 @@ public class StateView extends View {
 
     /**
      * 监听重试
-     * @param listener
+     * @param listener {@link OnRetryClickListener}
      */
     public void setOnRetryClickListener(OnRetryClickListener listener){
         this.mRetryClickListener = listener;
