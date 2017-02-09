@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 
 import com.github.nukc.stateview.StateView;
 
@@ -17,7 +18,9 @@ public class CustomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom);
 
-        mStateView = StateView.inject(this);
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear_layout);
+
+        mStateView = StateView.inject(linearLayout);
         mStateView.setEmptyResource(R.layout.view_empty);
         mStateView.setRetryResource(R.layout.view_retry);
 

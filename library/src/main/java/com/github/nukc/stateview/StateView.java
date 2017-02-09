@@ -13,7 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.AdapterView;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 /**
  * @author Nukc
@@ -52,6 +56,24 @@ public class StateView extends View {
      * @return StateView
      */
     public static StateView inject(@NonNull ViewGroup parent) {
+        // 因为 LinearLayout/ScrollView/AdapterView 的特性
+        // 为了 StateView 能正常显示，自动再套一层（开发的时候就不用额外的工作量了）
+        if (parent instanceof LinearLayout ||
+                parent instanceof ScrollView ||
+                parent instanceof AdapterView) {
+            FrameLayout root = new FrameLayout(parent.getContext());
+            root.setLayoutParams(parent.getLayoutParams());
+            ViewParent viewParent = parent.getParent();
+            if (viewParent instanceof ViewGroup) {
+                ViewGroup rootGroup = (ViewGroup) viewParent;
+                // 把 parent 从它自己的父容器中移除
+                rootGroup.removeView(parent);
+                // 然后替换成新的
+                rootGroup.addView(root);
+            }
+            root.addView(parent);
+            parent = root;
+        }
         return inject(parent, false);
     }
 
