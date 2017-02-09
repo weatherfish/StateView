@@ -63,6 +63,9 @@ public class StateView extends View {
                 parent instanceof AdapterView) {
             FrameLayout root = new FrameLayout(parent.getContext());
             root.setLayoutParams(parent.getLayoutParams());
+            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            parent.setLayoutParams(layoutParams);
             ViewParent viewParent = parent.getParent();
             if (viewParent instanceof ViewGroup) {
                 ViewGroup rootGroup = (ViewGroup) viewParent;
