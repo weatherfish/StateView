@@ -20,7 +20,7 @@
         <activity
             android:name=".FragmentActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".CustomActivity"></activity>
+        <activity android:name=".CustomActivity" />
     </application>
 
 </manifest>

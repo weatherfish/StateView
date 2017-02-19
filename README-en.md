@@ -4,28 +4,29 @@
 [![Download](https://api.bintray.com/packages/nukc/maven/StateView/images/download.svg) ](https://bintray.com/nukc/maven/StateView/_latestVersion)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-StateView-green.svg?style=true)](https://android-arsenal.com/details/1/4255)
 
-[English](https://github.com/nukc/StateView/blob/master/README-en.md)
+[中文](https://github.com/nukc/StateView/blob/master/README-zh.md)
 
-StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的一些特性, 初始状态下是不可见的, 不占布局位置, 占用内存少。
-当进行操作显示空/重试/加载视图后, 该视图才会被添加到布局中。
+StateView is a lightweight view that absorb characteristics of ViewStub. It can occupy less memory that the initia state is not visible and does not occupy the position of the layout. When the operation show empty / retry / loading view,
+it will be added to the layout.
 
 <img src="https://raw.githubusercontent.com/nukc/stateview/master/art/custom.gif">
 
+## Installation
+
+add the dependency to your build.gradle:
 
 ```groovy
    compile 'com.github.nukc.stateview:library:1.0.0'
 ```
 
-## 使用方法
+##Usage
 
-直接在代码中使用:
+Can be directly used in java.
 
-- 注入到Activity
 ```java
     mStateView = StateView.inject(Activity activity);
 ```
 
-- 注入到ViewGroup
 ```java
     mStateView = StateView.inject(ViewGroup parent);
 
@@ -33,13 +34,14 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 ```
 
 ```java
-    //可用于在Fragment的onCreateView中
+    //can be use in onCreateView of Fragment
     mStateView = StateView.inject(View view);
 
     mStateView = StateView.inject(View view, boolean hasActionBar);
 ```
 
-或添加到布局:
+
+Or include the StateView widget in your layout.
 
 ```xml
 
@@ -50,29 +52,29 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 
 ```
 
-- 显示空视图: ```mStateView.showEmpty();```
-- 显示加载视图: ```mStateView.showLoading();```
-- 显示重试视图: ```mStateView.showRetry();```
-- 显示内容: ``` mStateView.showContent();```
+To switch the state view:
 
-设置重试点击事件:
+- ```mStateView.showEmpty();```
+- ```mStateView.showLoading();```
+- ```mStateView.showRetry();```
+- ``` mStateView.showContent();```
+
+To listen the retry click:
 
 ```java
     mStateView.setOnRetryClickListener(new StateView.OnRetryClickListener() {
         @Override
         public void onRetryClick() {
             //do something, no need to call showLoading()
-            //不需要调用showLoading()方法, StateView自会调用
         }
     });
 ```
 
-设置自定义视图:
+To customize view:
 
-- 全局设置办法:在自己项目的layout下新建, 名字跟StateView默认layout一样即可(也不用代码设置).
-默认layout的名字:```base_empty```/```base_retry```/```base_loading```.
+- Global settings way: create a new layout (layout's name must be ```base_empty```/```base_retry```/```base_loading```).
 
-- 单页面设置:layout名字不一样, 然后再代码设置.
+- Single page setting: create a new layout whit different name, and set resource in java.
 
 ```java
 setEmptyResource(@LayoutRes int emptyResource)
@@ -95,67 +97,12 @@ setLoadingResource(@LayoutRes int loadingResource)
 </resources>
 ```
 
-## ChangeLog
-
-#### Version 1.0.0
-删除上版本 Deprecated 的方法；
-修改 inject(ViewGroup parent) 方法
-
-#### Version 0.3.5
-更改inject(activity)方法, 不直接添加到DecorView中, 而加到Content中.
-Deprecated几个方法.
-
-#### Version 0.3.3
-增加自定义视图的Sample;
-修改library的默认layout名字
-
-#### Version 0.3.2
-进一步测试, 增加Sample;
-删除没必要的方法, 考虑到注入不应该遮挡工具栏, 为此增加inject方法
-
-#### Version 0.3.1
-增加静态方法:
-inject(View view),该参数view必须是viewGroup,可用于在Fragment中
-
-#### Version 0.3.0
-增加静态方法:
-inject(Activity activity),用于把StateView添加到DecorView中;
-
-inject(ViewGroup parent),用于添加到ViewGroup中
-
-#### Version: 0.2.4
-修复显示LoadingView后还能触摸下层的View
-
-#### Version: 0.2.3
-修复 [issues #2](https://github.com/nukc/StateView/issues/2)
-
-#### Version: 0.2.1
-更新gradle和library版本, 增加一个私有方法showView。
-
-#### Version: 0.2.0
-修复v0.1.0版本中当使用layout_below的时候addView可能无法正常显示的问题。
-
-#### Version: 0.1.0
-测试Sample得知：
-```xml
-        <com.github.nukc.stateview.StateView
-             android:id="@+id/stateView"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:layout_marginTop="100dp"
-             tools:visibility="gone" />
-```
-    使用 android:layout_below="@+id/ll" 的话 , addView有时会无法正常显示，有时却正常。在寻找问题。。
-
-    3个按钮错乱多按几次，有几率会出现不显示的情况。
-
-
 
 ## License
 
     The MIT License (MIT)
 
-    Copyright (c) 2016,2017 Nukc
+    Copyright (c) 2016 Nukc
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

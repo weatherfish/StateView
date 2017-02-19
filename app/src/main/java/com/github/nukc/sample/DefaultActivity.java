@@ -31,7 +31,7 @@ public class DefaultActivity extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.btnTest).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(DefaultActivity.this, "warn: can click", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DefaultActivity.this, "can click", Toast.LENGTH_SHORT).show();
             }
         });
 
