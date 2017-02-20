@@ -45,8 +45,19 @@ public class StateView extends View {
      * @return StateView
      */
     public static StateView inject(@NonNull Activity activity) {
+        return inject(activity, false);
+    }
+
+    /**
+     * 注入到activity中
+     *
+     * @param activity Activity
+     * @param hasActionBar 是否有actionbar/toolbar
+     * @return StateView
+     */
+    public static StateView inject(@NonNull Activity activity, boolean hasActionBar) {
         ViewGroup rootView = (ViewGroup) activity.getWindow().getDecorView().findViewById(android.R.id.content);
-        return inject(rootView);
+        return inject(rootView, hasActionBar);
     }
 
     /**
@@ -56,6 +67,19 @@ public class StateView extends View {
      * @return StateView
      */
     public static StateView inject(@NonNull ViewGroup parent) {
+        return inject(parent, false);
+    }
+
+    /**
+     * 注入到ViewGroup中
+     *
+     * @param parent extends ViewGroup
+     * @param hasActionBar 是否有actionbar/toolbar,
+     *                     true: 会setMargin top, margin大小是actionbarSize
+     *                     false: not set
+     * @return StateView
+     */
+    public static StateView inject(@NonNull ViewGroup parent, boolean hasActionBar) {
         // 因为 LinearLayout/ScrollView/AdapterView 的特性
         // 为了 StateView 能正常显示，自动再套一层（开发的时候就不用额外的工作量了）
         if (parent instanceof LinearLayout ||
@@ -77,19 +101,6 @@ public class StateView extends View {
             root.addView(parent);
             parent = root;
         }
-        return inject(parent, false);
-    }
-
-    /**
-     * 注入到ViewGroup中
-     *
-     * @param parent extends ViewGroup
-     * @param hasActionBar 是否有actionbar/toolbar,
-     *                     true: 会setMargin top, margin大小是actionbarSize
-     *                     false: not set
-     * @return StateView
-     */
-    public static StateView inject(@NonNull ViewGroup parent, boolean hasActionBar) {
         StateView stateView = new StateView(parent.getContext());
         parent.addView(stateView);
         if (hasActionBar) {
