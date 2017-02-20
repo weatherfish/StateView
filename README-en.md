@@ -16,7 +16,7 @@ it will be added to the layout.
 add the dependency to your build.gradle:
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:1.0.0'
+   compile 'com.github.nukc.stateview:library:1.0.1'
 ```
 
 ##Usage
