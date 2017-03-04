@@ -13,7 +13,7 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:1.0.0'
+   compile 'com.github.nukc.stateview:library:1.1.0'
 ```
 
 ## 使用方法
@@ -33,7 +33,6 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 ```
 
 ```java
-    //可用于在Fragment的onCreateView中
     mStateView = StateView.inject(View view);
 
     mStateView = StateView.inject(View view, boolean hasActionBar);
@@ -96,6 +95,9 @@ setLoadingResource(@LayoutRes int loadingResource)
 ```
 
 ## ChangeLog
+
+#### Version 1.1.0
+fix [issues #6](https://github.com/nukc/StateView/issues/6)
 
 #### Version 1.0.0
 删除上版本 Deprecated 的方法；

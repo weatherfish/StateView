@@ -8,11 +8,13 @@ import android.graphics.Canvas;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -45,8 +47,19 @@ public class StateView extends View {
      * @return StateView
      */
     public static StateView inject(@NonNull Activity activity) {
+        return inject(activity, false);
+    }
+
+    /**
+     * 注入到activity中
+     *
+     * @param activity Activity
+     * @param hasActionBar 是否有actionbar/toolbar
+     * @return StateView
+     */
+    public static StateView inject(@NonNull Activity activity, boolean hasActionBar) {
         ViewGroup rootView = (ViewGroup) activity.getWindow().getDecorView().findViewById(android.R.id.content);
-        return inject(rootView);
+        return inject(rootView, hasActionBar);
     }
 
     /**
@@ -56,27 +69,6 @@ public class StateView extends View {
      * @return StateView
      */
     public static StateView inject(@NonNull ViewGroup parent) {
-        // 因为 LinearLayout/ScrollView/AdapterView 的特性
-        // 为了 StateView 能正常显示，自动再套一层（开发的时候就不用额外的工作量了）
-        if (parent instanceof LinearLayout ||
-                parent instanceof ScrollView ||
-                parent instanceof AdapterView) {
-            FrameLayout root = new FrameLayout(parent.getContext());
-            root.setLayoutParams(parent.getLayoutParams());
-            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            parent.setLayoutParams(layoutParams);
-            ViewParent viewParent = parent.getParent();
-            if (viewParent instanceof ViewGroup) {
-                ViewGroup rootGroup = (ViewGroup) viewParent;
-                // 把 parent 从它自己的父容器中移除
-                rootGroup.removeView(parent);
-                // 然后替换成新的
-                rootGroup.addView(root);
-            }
-            root.addView(parent);
-            parent = root;
-        }
         return inject(parent, false);
     }
 
@@ -90,8 +82,82 @@ public class StateView extends View {
      * @return StateView
      */
     public static StateView inject(@NonNull ViewGroup parent, boolean hasActionBar) {
+        // 因为 LinearLayout/ScrollView/AdapterView 的特性
+        // 为了 StateView 能正常显示，自动再套一层（开发的时候就不用额外的工作量了）
+        int screenHeight = 0;
+        if (parent instanceof LinearLayout ||
+                parent instanceof ScrollView ||
+                parent instanceof AdapterView) {
+            ViewParent viewParent = parent.getParent();
+            if (viewParent == null) {
+                // create a new FrameLayout to wrap StateView and parent's childView
+                FrameLayout wrapper = new FrameLayout(parent.getContext());
+                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                wrapper.setLayoutParams(layoutParams);
+
+                if (parent instanceof LinearLayout) {
+                    // create a new LinearLayout to wrap parent's childView
+                    LinearLayout wrapLayout = new LinearLayout(parent.getContext());
+                    wrapLayout.setLayoutParams(parent.getLayoutParams());
+                    wrapLayout.setOrientation(((LinearLayout) parent).getOrientation());
+
+                    for (int i = 0, childCount = parent.getChildCount(); i < childCount; i++) {
+                        View childView = parent.getChildAt(0);
+                        parent.removeView(childView);
+                        wrapLayout.addView(childView);
+                    }
+                    wrapper.addView(wrapLayout);
+                } else if (parent instanceof ScrollView) {
+                    // not recommended to inject scrollview
+                    if (parent.getChildCount() != 1) {
+                        throw new IllegalStateException("the scrollView does not have one direct child");
+                    }
+                    View directView = parent.getChildAt(0);
+                    parent.removeView(directView);
+                    wrapper.addView(directView);
+
+                    WindowManager wm = (WindowManager) parent.getContext()
+                            .getSystemService(Context.WINDOW_SERVICE);
+                    DisplayMetrics metrics = new DisplayMetrics();
+                    wm.getDefaultDisplay().getMetrics(metrics);
+                    screenHeight = metrics.heightPixels;
+                } else {
+                    throw new IllegalStateException("the view does not have parent, view = "
+                            + parent.toString());
+                }
+                // parent add wrapper
+                parent.addView(wrapper);
+                // StateView will be added to wrapper
+                parent = wrapper;
+            } else {
+                FrameLayout root = new FrameLayout(parent.getContext());
+                root.setLayoutParams(parent.getLayoutParams());
+                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                parent.setLayoutParams(layoutParams);
+
+                if (viewParent instanceof ViewGroup) {
+                    ViewGroup rootGroup = (ViewGroup) viewParent;
+                    // 把 parent 从它自己的父容器中移除
+                    rootGroup.removeView(parent);
+                    // 然后替换成新的
+                    rootGroup.addView(root);
+                }
+                root.addView(parent);
+                parent = root;
+            }
+        }
         StateView stateView = new StateView(parent.getContext());
-        parent.addView(stateView);
+        if (screenHeight > 0) {
+            // let StateView be shown in the center
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    hasActionBar ? screenHeight - stateView.getActionBarHeight() : screenHeight);
+            parent.addView(stateView, params);
+        } else {
+            parent.addView(stateView);
+        }
         if (hasActionBar) {
             stateView.setTopMargin();
         }
@@ -307,7 +373,7 @@ public class StateView extends View {
     /**
      * @return actionBarSize
      */
-    private int getActionBarHeight() {
+    public int getActionBarHeight() {
         int height = 0;
         TypedValue tv = new TypedValue();
         if (getContext().getTheme().resolveAttribute(R.attr.actionBarSize, tv, true)) {
